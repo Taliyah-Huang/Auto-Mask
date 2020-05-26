@@ -1,0 +1,65 @@
+  #include <Servo.h>
+const int buttonPin = 2;
+Servo myservo1;
+Servo myservo2;
+
+int onoff = 0;
+
+//For Muscle
+int sensorValue = 0; 
+int outputValue = 0;
+
+//For Ultrasonic
+int time;
+int distance;
+int trigPin = 7;
+int echoPin = 8;
+
+void setup() {
+  myservo1.attach(9);
+  myservo2.attach(10);
+  pinMode(A0, INPUT); // Muscle
+  pinMode (trigPin, OUTPUT);
+  pinMode (echoPin, INPUT);
+}
+
+void loop() {
+    
+//Muscle Sensor
+ delay(50);
+  sensorValue = analogRead(A0);
+  outputValue = map(sensorValue, 0, 1023, 0, 255);
+  Serial.println(sensorValue);
+
+if (sensorValue > 400) {
+    if (onoff == 0) {
+      myservo1.write(90);
+      myservo2.write(80);
+      onoff = 1;
+    }
+  }
+
+//Ultrasonic
+  digitalWrite (trigPin, HIGH);
+  delayMicroseconds (10);
+  digitalWrite (trigPin, LOW);
+  time = pulseIn (echoPin, HIGH);
+  distance = (time * 0.034) / 2;
+
+if (distance < 5 && distance > 0) {
+  delay(500);
+  if (distance < 5 && distance > 0){
+    if (onoff == 0) {
+      myservo1.write(115);
+      myservo2.write(70);
+      onoff = 1;
+      delay(1000);
+    }else{
+      myservo2.write(180);
+      myservo1.write(0);
+      onoff = 0;
+      delay(1000);
+    }
+    }
+}
+}
